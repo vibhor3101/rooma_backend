@@ -7,7 +7,15 @@ import java.util.List;
 
 @Service
 public class BookingService {
-    public List<BookedRoom> getAllBookingsByRoomId(Long roomId) {
-        return null;
+//    private final BookingRepository bookingRepository;
+
+        public List<BookedRoom> getAllBookingsByRoomId(Long roomId) {
+
+            return null;
     }
+//    @Override
+//    public List<BookedRoom> getAllBookings() {
+//        return bookingRepository.findAll();
+//    }
+
 }
