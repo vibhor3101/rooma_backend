@@ -1,4 +1,4 @@
 package com.codewithvibhor.rooma.service;
 
-public interface IBookedRoomService {
+public interface IBookingService {
 }

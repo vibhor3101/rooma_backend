@@ -1,4 +1,4 @@
 package com.codewithvibhor.rooma.repository;
 
-public interface BookedRoomRepository {
+public interface BookingRepository {
 }
