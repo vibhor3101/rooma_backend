@@ -34,4 +34,7 @@ public class BookingResponse {
         this.checkOutDate = checkOutDate;
         this.bookingConfirmationCode = bookingConfirmationCode;
     }
+
+    public void add(BookingResponse bookingResponse) {
+    }
 }

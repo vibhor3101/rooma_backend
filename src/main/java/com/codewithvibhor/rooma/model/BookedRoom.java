@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.security.Identity;
+//import java.security.Identity;
 import java.time.LocalDate;
 @Entity
 @Getter
@@ -42,8 +42,7 @@ public class BookedRoom {
     private Room room;
 
     public void calculateTotalNumberOfGuest(){
-        this.totalNumOfGuest = this.NumOfAdults+this.NumOfChildren;
-
+        this.totalNumOfGuest = this.NumOfAdults + NumOfChildren;
     }
 
     public void setNumOfAdults(int numOfAdults) {
@@ -60,7 +59,6 @@ public class BookedRoom {
         this.bookingConfirmationCode = bookingConfirmationCode;
     }
 }
-
 
 
 

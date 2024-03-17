@@ -3,8 +3,11 @@ package com.codewithvibhor.rooma.controller;
 import com.codewithvibhor.rooma.exception.InvalidBookingRequestException;
 import com.codewithvibhor.rooma.exception.ResourceNotFoundException;
 import com.codewithvibhor.rooma.model.BookedRoom;
+import com.codewithvibhor.rooma.model.Room;
 import com.codewithvibhor.rooma.response.BookingResponse;
+import com.codewithvibhor.rooma.response.RoomResponse;
 import com.codewithvibhor.rooma.service.IBookingService;
+import com.codewithvibhor.rooma.service.IRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -17,37 +20,70 @@ import java.util.List;
 @RestController
 @RequestMapping("/bookings")
 public class BookingController {
-    private  final IBookingService bookingService;
-@GetMapping("/all-bookings")
-    public ResponseEntity<List<BookingResponse>>  getAllBookings(){
+    private final IBookingService bookingService;
+    private final IRoomService roomService;
+
+
+    @GetMapping("/all-bookings")
+    public ResponseEntity<List<BookingResponse>> getAllBookings() {
         List<BookedRoom> bookings = bookingService.getAllBookings();
         List<BookingResponse> bookingResponses = new ArrayList<>();
-        for(BookedRoom booking : bookings){
+        for (BookedRoom booking : bookings) {
             BookingResponse bookingResponse = getBookingResponse(booking);
             bookingResponse.add(bookingResponse);
 
         }
-return ResponseEntity.ok(bookingResponses);
+        return ResponseEntity.ok(bookingResponses);
     }
+
+
+
     @GetMapping("/confirmation/{confirmationCode}")
-    public ResponseEntity<?> getBookingByConfirmationCode(@PathVariable String confirmationCode)
-    {
+    public ResponseEntity<?> getBookingByConfirmationCode(@PathVariable String confirmationCode) {
         try {
             BookedRoom booking = bookingService.findByBookingConfirmationCode(confirmationCode);
             BookingResponse bookingResponse = getBookingResponse(booking);
             return ResponseEntity.ok(bookingResponse);
 
-        }catch(ResourceNotFoundException ex) {
+        } catch (ResourceNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
 
         }
     }
+
     @PostMapping("/room/{roomId}/booking")
     public ResponseEntity<?> saveBooking(@PathVariable Long roomId,
-                                         @RequestBody BookedRoom bookingRequest){
+                                         @RequestBody BookedRoom bookingRequest)
+    {
+
+        try {
+            String confirmationCode = bookingService.saveBooking(roomId, bookingRequest);
+            return ResponseEntity.ok("Room booked successfully!Your booking confirmation code is : " + confirmationCode);
+        } catch(InvalidBookingRequestException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
+    }
+
+    @DeleteMapping("/booking/{bookingId}/delete")
+    public  void cancelBooking(@PathVariable Long bookingId){
+        bookingService.cancelBooking(bookingId);
+    }
+
+    private BookingResponse getBookingResponse(BookedRoom booking) {
+        Room theRoom = roomService.getRoomById(booking.getRoom().getId()).get();
+        RoomResponse room = new RoomResponse(
+                theRoom.getId(),
+                theRoom.getRoomType(),
+                theRoom.getRoomPrice());
+        return new BookingResponse(
+                booking.getBookingId() , booking.getCheckInDate(),
+                booking.getCheckOutDate(),booking.getGuestFullName(),
+                booking.getGuestEmail(),booking.getNumOfAdults(),
+                booking.getNumOfChildren(),booking.getTotalNumOfGuest(),
+                booking.getBookingConfirmationCode(),room);
 
 
-
-
+    }
 
 }
